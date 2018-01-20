@@ -16,31 +16,60 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+function elID(id) {
+  return document.getElementById(id);
+}
+
+function setImgSrc(imgId, imgPath) {
+  elID(imgId).src = imgPath;
+}
+
 var app = {
-    // Application Constructor
-    initialize: function() {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-    },
+  // Application Constructor
+  initialize: function() {
+    document.addEventListener(
+      'deviceready',
+      this.onDeviceReady.bind(this),
+      false
+    );
+  },
 
-    // deviceready Event Handler
-    //
-    // Bind any cordova events here. Common events are:
-    // 'pause', 'resume', etc.
-    onDeviceReady: function() {
-        this.receivedEvent('deviceready');
-    },
+  // deviceready Event Handler
+  //
+  // Bind any cordova events here. Common events are:
+  // 'pause', 'resume', etc.
+  onDeviceReady: function() {
+    elID('get-photo-btn').addEventListener('click', () => {
+      navigator.camera.getPicture(this.onGetPhotoSuccess, this.onGetPhotoFail, {
+        sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+      });
+    });
 
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+    elID('take-photo-btn').addEventListener('click', () => {
+      navigator.camera.getPicture(
+        this.onTakePhotoSuccess,
+        this.onTakePhotoFail,
+        {
+          sourceType: Camera.PictureSourceType.CAMERA
+        }
+      );
+    });
+  },
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+  onTakePhotoSuccess: function(imgPath) {
+    setImgSrc('my-img', imgPath);
+  },
+  onTakePhotoFail: function(err) {
+    alert(err);
+  },
 
-        console.log('Received Event: ' + id);
-    }
+  onGetPhotoSuccess: function(imgPath) {
+    setImgSrc('my-img', imgPath);
+  },
+  onGetPhotoFail: function(err) {
+    alert(err);
+  }
 };
 
 app.initialize();
